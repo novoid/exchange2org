@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-PROG_VERSION = "Time-stamp: <2017-09-16 18:29:15 vk>"
+PROG_VERSION = "Time-stamp: <2017-09-16 19:21:50 vk>"
 
 # TODO:
 # - fix parts marked with «FIXXME»
-# - implement recurring events
-# - write README.org
 
 
 # ===================================================================== ##
@@ -35,7 +33,7 @@ save_import('exchangelib')  # for accessing Exchange servers
 
 PROG_VERSION_DATE = PROG_VERSION[13:23]
 
-DAY_STRING_REGES = re.compile('([12]\d\d\d)-([012345]\d)-([012345]\d)')
+DAY_STRING_REGEX = re.compile('([12]\d\d\d)-([012345]\d)-([012345]\d)')
 
 DESCRIPTION = "This tool connects to your Exchange server and extracts data\n\
 in Org-mode format.\n\
@@ -68,6 +66,12 @@ parser = argparse.ArgumentParser(prog=sys.argv[0],
 parser.add_argument(dest='outputfile', metavar='FILE', nargs=1, help='The filename of the output file')
 
 parser.add_argument('--calendar', action='store_true', help='Extract the calendar as Org-mode events. ')
+
+parser.add_argument('--startday', metavar='date-or-days', nargs=1, help='Starting date for fetching data. ' +
+                    'Default: 60 days in past. "date-or-days" is either of form "YYYY-MM-DD" or a number.')
+
+parser.add_argument('--endday', metavar='date-or-days', nargs=1, help='End date for fetching data. ' +
+                    'Default: 60 days in future. "date-or-days" is either of form "YYYY-MM-DD" or a number.')
 
 parser.add_argument('-s', '--dryrun', dest='dryrun', action='store_true',
                     help='enable dryrun mode: simulate what would happen, do not modify anything')
@@ -113,7 +117,7 @@ def day_string_to_datetime(timestr):
     @param return: date time object
     """
 
-    components = re.match(DAY_STRING_REGES, timestr)
+    components = re.match(DAY_STRING_REGEX, timestr)
     # components.groups() -> ('2017', '08', '15')
 
     if not components:
@@ -238,13 +242,19 @@ class Exchange2Org(object):
 
         return output
 
-    def dump_calendar(self):
+    def dump_calendar(self, startday, endday):
+        """
+        Retrieves Exchange calendar data from the server and writes output file.
+
+        @param startday: list of year, month, day as integers
+        @param endday: list of year, month, day as integers
+        """
 
         number_of_events = 0
         outputfilename = options.outputfile[0]
 
         # Fetch all calendar events from the Exchange server:
-        events = self.account.calendar.view(start=self.tz.localize(exchangelib.EWSDateTime(2017, 1, 1)), end=self.tz.localize(exchangelib.EWSDateTime(2018, 1, 1)))
+        events = self.account.calendar.view(start=self.tz.localize(exchangelib.EWSDateTime(*startday)), end=self.tz.localize(exchangelib.EWSDateTime(*endday)))
 
         with open(outputfilename, 'w') as outputhandle:
 
@@ -271,6 +281,38 @@ class Exchange2Org(object):
 
         self.logger.info(str(number_of_events) + ' events were written to ' + outputfilename)
 
+
+def handle_date_or_period_argument(daystring, future):
+    """
+    Gets a string containing either a 'YYYY-MM-DD' ISO day format
+    or an integer. Returns a list of year, month, day of the ISO day
+    or (in case of an integer) a similar list with number of days in
+    the past or the future - according to the 2nd parameter.
+
+    @param daystring: string with either 'YYYY-MM-DD' format or an integer
+    @param furure: boolean
+    @param endday: list of year, month, day as integers
+    """
+
+    # check format: integer or ISO date string?
+    components = re.match(DAY_STRING_REGEX, daystring)
+    if components:
+        # parameter was of format YYYY-MM-DD
+        return [int(components.group(1)), int(components.group(2)), int(components.group(3))]
+    else:
+        # parameter might be an integer:
+        try:
+            number_of_days = int(daystring)
+        except:
+            error_exit(2, 'Format of daystring parameter must be "YYYY-MM-DD" or an integer.')
+        if future:
+            delta_days = number_of_days
+        else:
+            delta_days = -number_of_days
+        daystring_datetime = datetime.datetime.now() + datetime.timedelta(days=delta_days)
+        return [daystring_datetime.year, daystring_datetime.month, daystring_datetime.day]
+
+
 def main():
     """Main function"""
 
@@ -279,6 +321,17 @@ def main():
     if options.verbose and options.quiet:
         error_exit(1, "Options \"--verbose\" and \"--quiet\" found. " +
                    "This does not make any sense, you silly fool :-)")
+
+    # The defaults are: ±60 days
+    before_60_days = datetime.datetime.now() + datetime.timedelta(days=-60)
+    startday = [before_60_days.year, before_60_days.month, before_60_days.day]
+    in_60_days = datetime.datetime.now() + datetime.timedelta(days=60)
+    endday = [in_60_days.year, in_60_days.month, in_60_days.day]
+
+    if options.startday:
+        startday = handle_date_or_period_argument(options.startday[0], future=False)
+    if options.endday:
+        endday = handle_date_or_period_argument(options.endday[0], future=True)
 
     if options.dryrun:
         logging.debug("DRYRUN active, not changing any files")
@@ -296,18 +349,13 @@ def main():
     # So far, we only handle calendar events. Maybe the future will bring more:
     if options.calendar:
         exchange2org = Exchange2Org(exchange2orgconfig, logging.getLogger())
-        exchange2org.dump_calendar()
+        exchange2org.dump_calendar(startday=startday, endday=endday)
 
     if not options.quiet:
         # add empty line for better screen output readability
         print()
 
-    if True:
-        logging.debug('successfully finished.')
-    else:
-        logging.debug("finished with FIXXME")
-        sys.exit(1)
-
+    logging.debug('successfully finished.')
 
 if __name__ == "__main__":
     try:

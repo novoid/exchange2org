@@ -1,4 +1,4 @@
-## Time-stamp: <2017-09-16 18:29:59 vk>
+## Time-stamp: <2017-09-16 19:21:11 vk>
 ## -*- mode: org; coding: utf-8 -*-
 ## This file is best viewed with GNU Emacs Org-mode: http://orgmode.org/
 
@@ -9,7 +9,9 @@
 #+END_SRC
 
 #+BEGIN_src
-usage: ./exchange2org.py [-h] [--calendar] [-s] [-v] [-q] FILE
+usage: ./exchange2org.py [-h] [--calendar] [--startday date-or-days]
+                         [--endday date-or-days] [-s] [-v] [-q]
+                         FILE
 
 This tool connects to your Exchange server and extracts data
 in Org-mode format.
@@ -25,15 +27,23 @@ Example usages:
       … writes your calendar events into the Org-mode file.
 
 positional arguments:
-  FILE           The filename of the output file
+  FILE                  The filename of the output file
 
 optional arguments:
-  -h, --help     show this help message and exit
-  --calendar     Extract the calendar as Org-mode events.
-  -s, --dryrun   enable dryrun mode: simulate what would happen, do not modify
-                 anything
-  -v, --verbose  enable verbose mode
-  -q, --quiet    enable quiet mode
+  -h, --help            show this help message and exit
+  --calendar            Extract the calendar as Org-mode events.
+  --startday date-or-days
+                        Starting date for fetching data. Default: 60 days in
+                        past. "date-or-days" is either of form "YYYY-MM-DD" or
+                        a number.
+  --endday date-or-days
+                        End date for fetching data. Default: 60 days in
+                        future. "date-or-days" is either of form "YYYY-MM-DD"
+                        or a number.
+  -s, --dryrun          enable dryrun mode: simulate what would happen, do not
+                        modify anything
+  -v, --verbose         enable verbose mode
+  -q, --quiet           enable quiet mode
 
 :copyright: (c) by Karl Voit <tools@Karl-Voit.at>
 :license: GPL v3 or any later version
@@ -42,6 +52,7 @@ optional arguments:
 :version: 2017-09-16
 ·
 #+END_src
+
 
 - Hosted on github: https://github.com/novoid/exchange2org
 - Will be discontinued and merged into
