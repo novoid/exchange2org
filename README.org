@@ -1,4 +1,4 @@
-## Time-stamp: <2017-09-16 18:04:47 vk>
+## Time-stamp: <2017-09-16 18:29:59 vk>
 ## -*- mode: org; coding: utf-8 -*-
 ## This file is best viewed with GNU Emacs Org-mode: http://orgmode.org/
 
@@ -18,6 +18,8 @@ Please do note that this is a TEMPORARY stand-alone tool which will
 be added to Memacs as an module as soon as Memacs got migrated to
 Python 3:   https://github.com/novoid/memacs/
 
+You can configure the behavior and output via a configuration file.
+
 Example usages:
   ./exchange2org.py --calendar some/subfolder/my_exchange_calendar.org
       … writes your calendar events into the Org-mode file.
@@ -27,8 +29,7 @@ positional arguments:
 
 optional arguments:
   -h, --help     show this help message and exit
-  --calendar     Extract the calendar as Org-mode events. Still missing:
-                 recurring events are added only once.
+  --calendar     Extract the calendar as Org-mode events.
   -s, --dryrun   enable dryrun mode: simulate what would happen, do not modify
                  anything
   -v, --verbose  enable verbose mode

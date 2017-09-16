@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-PROG_VERSION = "Time-stamp: <2017-09-16 18:03:12 vk>"
+PROG_VERSION = "Time-stamp: <2017-09-16 18:29:15 vk>"
 
 # TODO:
 # - fix parts marked with «FIXXME»
@@ -44,6 +44,8 @@ Please do note that this is a TEMPORARY stand-alone tool which will\n\
 be added to Memacs as an module as soon as Memacs got migrated to\n\
 Python 3:   https://github.com/novoid/memacs/\n\
 \n\
+You can configure the behavior and output via a configuration file.\n\
+\n\
 Example usages:\n\
   " + sys.argv[0] + " --calendar some/subfolder/my_exchange_calendar.org\n\
       … writes your calendar events into the Org-mode file.\n\
@@ -65,8 +67,7 @@ parser = argparse.ArgumentParser(prog=sys.argv[0],
 
 parser.add_argument(dest='outputfile', metavar='FILE', nargs=1, help='The filename of the output file')
 
-parser.add_argument('--calendar', action='store_true', help='Extract the calendar as Org-mode events. ' +
-                    'Still missing: recurring events are added only once.')
+parser.add_argument('--calendar', action='store_true', help='Extract the calendar as Org-mode events. ')
 
 parser.add_argument('-s', '--dryrun', dest='dryrun', action='store_true',
                     help='enable dryrun mode: simulate what would happen, do not modify anything')
@@ -227,7 +228,10 @@ class Exchange2Org(object):
         if len(self.config.OUTLOOK_HYPERLINK) > 1:
             output += ' [[outlook:' + event.item_id + '][🔗]]'
 
-        output += '\n:PROPERTIES:\n:ID: ' + event.item_id + '\n:END:\n'
+        if self.config.WRITE_PROPERTIES_DRAWER:
+            output += '\n:PROPERTIES:\n:ID: ' + event.item_id + '\n:END:\n'
+        else:
+            output += '\n'
 
         if options.verbose:
             output += ': ' + '\n: '.join(debugtext) + '\n'
@@ -240,8 +244,7 @@ class Exchange2Org(object):
         outputfilename = options.outputfile[0]
 
         # Fetch all calendar events from the Exchange server:
-        events = self.account.calendar.all().filter( \
-            start__range=(self.tz.localize(exchangelib.EWSDateTime(2017, 1, 1)), self.tz.localize(exchangelib.EWSDateTime(2018, 1, 1))))
+        events = self.account.calendar.view(start=self.tz.localize(exchangelib.EWSDateTime(2017, 1, 1)), end=self.tz.localize(exchangelib.EWSDateTime(2018, 1, 1)))
 
         with open(outputfilename, 'w') as outputhandle:
 

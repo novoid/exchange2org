@@ -1,5 +1,5 @@
 # -*- coding: utf-8; mode: python; -*-
-# Time-stamp: <2017-09-16 17:38:33 vk>
+# Time-stamp: <2017-09-16 18:20:34 vk>
 
 # ===================================================================== ##
 #                                                                       ##
@@ -49,6 +49,10 @@ OMIT_SUBJECTS = ['Christmas Eve', 'Sylvester', 'Good Friday', 'Holy Thursday',
                  'Easter Day', 'Corpus Christi', 'Assumption', 'Ascension',
                  'All Saints\' Day']
 
+# If you don't need the PROPERTIES drawers containing the IDs of the
+# entries, set this to False:
+WRITE_PROPERTIES_DRAWER = True
+
 # ===================================================================== ##
 #                                                                       ##
 #  These are INTERNAL configuration settings.                           ##
@@ -71,7 +75,7 @@ assert type(CATEGORY) == str
 assert type(TAGS) == list
 assert type(OUTLOOK_HYPERLINK) == str
 assert type(OMIT_SUBJECTS) == list
-
+assert type(WRITE_PROPERTIES_DRAWER) == bool
 
 # END OF FILE #################################################################
 # Local Variables:
