@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-PROG_VERSION = "Time-stamp: <2017-09-16 19:21:50 vk>"
+PROG_VERSION = "Time-stamp: <2017-09-16 19:27:45 vk>"
 
 # TODO:
 # - fix parts marked with «FIXXME»
@@ -137,7 +137,6 @@ def day_string_to_datetime(timestr):
     return datetime.datetime(year, month, day)
 
 
-
 class Exchange2Org(object):
 
     logger = None
@@ -159,6 +158,12 @@ class Exchange2Org(object):
             raise
 
     def convert_to_orgmode(self, event):
+        """
+        Gets a calendar event and returns its representation in Org-mode format.
+
+        @param event: an Exchange calendar event
+        @param return: string containing a heading with a representation of the calendar event
+        """
 
         subject = event.subject
 
@@ -198,11 +203,6 @@ class Exchange2Org(object):
 
         if event.is_cancelled or event.subject in self.config.OMIT_SUBJECTS:
             return False
-
-        # legacy_free_busy_status='Busy',
-        # organizer=Mailbox('Karl Voit', 'K.Voit@detego.com', 'Mailbox', None),
-        # required_attendees=[Attendee(Mailbox('Karl Voit', 'K.Voit@detego.com', 'Mailbox', None), 'Unknown', None)],
-        # optional_attendees=None, resources=None, recurrence=Recurrence(WeeklyPattern(1,  [1,  2,  3,  4, 5],  7),  NoEndPattern(EWSDate(2017,  9,  13),)),
 
         output = '** <' + start_day
 
@@ -330,13 +330,15 @@ def main():
 
     if options.startday:
         startday = handle_date_or_period_argument(options.startday[0], future=False)
+        logging.debug('options.startday found and set to ' + repr(startday))
     if options.endday:
         endday = handle_date_or_period_argument(options.endday[0], future=True)
+        logging.debug('options.endday found and set to ' + repr(endday))
 
     if options.dryrun:
         logging.debug("DRYRUN active, not changing any files")
 
-    # Looking for the configuration file which is on a hard-coded path:
+    logging.debug('Looking for the configuration file which is expected to be found on a hard-coded path')
     CONFIGDIR = os.path.join(os.path.expanduser("~"), ".config/exchange2org")
     sys.path.insert(0, CONFIGDIR)  # add CONFIGDIR to Python path in order to find config file
     try:
@@ -350,6 +352,8 @@ def main():
     if options.calendar:
         exchange2org = Exchange2Org(exchange2orgconfig, logging.getLogger())
         exchange2org.dump_calendar(startday=startday, endday=endday)
+    else:
+        logging.info('Sorry, at the moment this tool only supports calendar events. So please use the --calendar parameter.')
 
     if not options.quiet:
         # add empty line for better screen output readability
