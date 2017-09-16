@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-PROG_VERSION = "Time-stamp: <2017-09-16 19:27:45 vk>"
+PROG_VERSION = "Time-stamp: <2017-09-16 22:10:48 vk>"
 
 # TODO:
 # - fix parts marked with «FIXXME»
@@ -191,7 +191,7 @@ class Exchange2Org(object):
         debugtext.append('end_day:' + end_day)
         debugtext.append('end_time:' + end_time)
         debugtext.append('subject: ' + event.subject)
-        debugtext.append('ID: ' + event.item_id)
+        debugtext.append('UID: ' + event.uid)
         debugtext.append('is_all_day: ' + repr(event.is_all_day)) # =False
         if event.location:
             debugtext.append('location: ' + event.location)  #=None,
@@ -230,10 +230,10 @@ class Exchange2Org(object):
             output += ' (' + event.location + ')'
 
         if len(self.config.OUTLOOK_HYPERLINK) > 1:
-            output += ' [[outlook:' + event.item_id + '][🔗]]'
+            output += ' [[outlook:' + event.uid + '][🔗]]'
 
         if self.config.WRITE_PROPERTIES_DRAWER:
-            output += '\n:PROPERTIES:\n:ID: ' + event.item_id + '\n:END:\n'
+            output += '\n:PROPERTIES:\n:ID: ' + event.uid + '\n:END:\n'
         else:
             output += '\n'
 
