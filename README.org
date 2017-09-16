@@ -1,0 +1,74 @@
+## Time-stamp: <2017-09-16 18:04:47 vk>
+## -*- mode: org; coding: utf-8 -*-
+## This file is best viewed with GNU Emacs Org-mode: http://orgmode.org/
+
+* exchange2org
+
+#+BEGIN_SRC sh :results output :wrap src
+./exchange2org.py --help
+#+END_SRC
+
+#+BEGIN_src
+usage: ./exchange2org.py [-h] [--calendar] [-s] [-v] [-q] FILE
+
+This tool connects to your Exchange server and extracts data
+in Org-mode format.
+
+Please do note that this is a TEMPORARY stand-alone tool which will
+be added to Memacs as an module as soon as Memacs got migrated to
+Python 3:   https://github.com/novoid/memacs/
+
+Example usages:
+  ./exchange2org.py --calendar some/subfolder/my_exchange_calendar.org
+      … writes your calendar events into the Org-mode file.
+
+positional arguments:
+  FILE           The filename of the output file
+
+optional arguments:
+  -h, --help     show this help message and exit
+  --calendar     Extract the calendar as Org-mode events. Still missing:
+                 recurring events are added only once.
+  -s, --dryrun   enable dryrun mode: simulate what would happen, do not modify
+                 anything
+  -v, --verbose  enable verbose mode
+  -q, --quiet    enable quiet mode
+
+:copyright: (c) by Karl Voit <tools@Karl-Voit.at>
+:license: GPL v3 or any later version
+:URL: https://github.com/novoid/exchange2org
+:bugreports: via github or <tools@Karl-Voit.at>
+:version: 2017-09-16
+·
+#+END_src
+
+- Hosted on github: https://github.com/novoid/exchange2org
+- Will be discontinued and merged into
+  https://github.com/novoid/memacs/ as soon as Memacs got migrated to
+  Python 3.
+
+** Installation
+
+Clone it via [[https://github.com/novoid/filetags][GitHub]] and install all dependencies via =pip=:
+
+: sudo pip install logging exchangelib
+
+Run it with Python 3.x.
+
+* How to Thank Me
+
+I'm glad you like my tools. If you want to support me:
+
+- Send old-fashioned *postcard* per snailmail - I love personal feedback!
+  - see [[http://tinyurl.com/j6w8hyo][my address]]
+- Send feature wishes or improvements as an issue on GitHub
+- Create issues on GitHub for bugs
+- Contribute merge requests for bug fixes
+- Check out my other cool [[https://github.com/novoid][projects on GitHub]]
+
+* Local Variables                                                  :noexport:
+# Local Variables:
+# mode: auto-fill
+# mode: flyspell
+# eval: (ispell-change-dictionary "en_US")
+# End:
