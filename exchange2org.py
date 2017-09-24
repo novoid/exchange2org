@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-PROG_VERSION = "Time-stamp: <2017-09-16 22:10:48 vk>"
+PROG_VERSION = "Time-stamp: <2017-09-24 12:15:12 vk>"
 
 # TODO:
 # - fix parts marked with «FIXXME»
@@ -24,7 +24,8 @@ def save_import(library):
 import sys
 import os
 import re
-save_import('argparse')   # for handling command line arguments
+save_import('base64')       # itemID/entryID conversion
+save_import('argparse')     # for handling command line arguments
 save_import('time')
 save_import('datetime')
 save_import('logging')
@@ -157,6 +158,30 @@ class Exchange2Org(object):
             logger.critical('Error occured while trying to set up connection with the exchange server "' + self.config.EXCHANGE_SERVER + '":')
             raise
 
+    def convert_itemid_from_exchange_to_entryid_for_outlook(self, itemid):
+        """
+        Converts the string of the ItemID we got from the exchange server to the
+        EntryID we can query in Outlook.
+
+        Don't ask me why there is a need for the two IDs. It took me some hours to
+        figure out the issue in the first place and another two hours to find the
+        magic algorythm to convert.
+
+        Interesting sources:
+        https://blogs.msdn.microsoft.com/brijs/2010/09/09/how-to-convert-exchange-items-entryid-to-ews-unique-itemid-via-ews-managed-api-convertid-call/
+        Solution: https://github.com/ecederstrand/exchangelib/issues/146
+
+        @param itemid: string of the itemid from the exchange server
+        @param return: string of the entryid for outlook
+        """
+
+        # Use the magic wand:
+        decoded_val = base64.b64decode(itemid)
+        itemID = decoded_val.hex().upper()
+
+        # Somehow, my Outlook does not want the first 86 characters:
+        return itemID[86:]
+
     def convert_to_orgmode(self, event):
         """
         Gets a calendar event and returns its representation in Org-mode format.
@@ -171,6 +196,8 @@ class Exchange2Org(object):
         start_time = event.start.astimezone(self.tz).ewsformat()[11:16]
         end_day = event.end.astimezone(self.tz).ewsformat()[:10]
         end_time = event.end.astimezone(self.tz).ewsformat()[11:16]
+        entry_id = self.convert_itemid_from_exchange_to_entryid_for_outlook(str(event.item_id))
+        #entry_id = event.item_id  # until I found a working version for Python 3 of the function above
 
         if event.is_all_day:
             assert(end_time == '00:00')
@@ -191,7 +218,8 @@ class Exchange2Org(object):
         debugtext.append('end_day:' + end_day)
         debugtext.append('end_time:' + end_time)
         debugtext.append('subject: ' + event.subject)
-        debugtext.append('UID: ' + event.uid)
+        debugtext.append('item_id: ' + event.item_id)
+        debugtext.append('entry_id: ' + entry_id)
         debugtext.append('is_all_day: ' + repr(event.is_all_day)) # =False
         if event.location:
             debugtext.append('location: ' + event.location)  #=None,
@@ -230,10 +258,10 @@ class Exchange2Org(object):
             output += ' (' + event.location + ')'
 
         if len(self.config.OUTLOOK_HYPERLINK) > 1:
-            output += ' [[outlook:' + event.uid + '][🔗]]'
+            output += ' [[outlook:' + entry_id + '][⦿]]'
 
         if self.config.WRITE_PROPERTIES_DRAWER:
-            output += '\n:PROPERTIES:\n:ID: ' + event.uid + '\n:END:\n'
+            output += '\n:PROPERTIES:\n:ID: ' + entry_id + '\n:END:\n'
         else:
             output += '\n'
 
