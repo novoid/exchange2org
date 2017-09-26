@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-PROG_VERSION = "Time-stamp: <2017-09-24 12:15:12 vk>"
+PROG_VERSION = "Time-stamp: <2017-09-26 18:01:15 vk>"
 
 # TODO:
 # - fix parts marked with «FIXXME»
@@ -73,6 +73,8 @@ parser.add_argument('--startday', metavar='date-or-days', nargs=1, help='Startin
 
 parser.add_argument('--endday', metavar='date-or-days', nargs=1, help='End date for fetching data. ' +
                     'Default: 60 days in future. "date-or-days" is either of form "YYYY-MM-DD" or a number.')
+
+parser.add_argument('--ignore-category', metavar='CATEGORY', nargs=1, help='Category whose events will be omitted.')
 
 parser.add_argument('-s', '--dryrun', dest='dryrun', action='store_true',
                     help='enable dryrun mode: simulate what would happen, do not modify anything')
@@ -192,6 +194,14 @@ class Exchange2Org(object):
 
         subject = event.subject
 
+        if event.is_cancelled or \
+           event.subject in self.config.OMIT_SUBJECTS:
+            return False
+
+        if event.categories and options.ignore_category:
+            if options.ignore_category[0] in event.categories:
+                return False
+
         start_day = event.start.astimezone(self.tz).ewsformat()[:10]
         start_time = event.start.astimezone(self.tz).ewsformat()[11:16]
         end_day = event.end.astimezone(self.tz).ewsformat()[:10]
@@ -228,9 +238,6 @@ class Exchange2Org(object):
         debugtext.append('is_cancelled: ' + repr(event.is_cancelled))  #=False,
 
         self.logger.debug('=' * 80 + '\n' + '\n'.join(debugtext))
-
-        if event.is_cancelled or event.subject in self.config.OMIT_SUBJECTS:
-            return False
 
         output = '** <' + start_day
 
