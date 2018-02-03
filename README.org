@@ -1,15 +1,11 @@
-## Time-stamp: <2017-09-16 19:21:11 vk>
-## -*- mode: org; coding: utf-8 -*-
-## This file is best viewed with GNU Emacs Org-mode: http://orgmode.org/
-
 * exchange2org
 
 #+BEGIN_SRC sh :results output :wrap src
-./exchange2org.py --help
+./exchange2org/__init__.py --help
 #+END_SRC
 
 #+BEGIN_src
-usage: ./exchange2org.py [-h] [--calendar] [--startday date-or-days]
+usage: exchange2org.py [-h] [--calendar] [--startday date-or-days]
                          [--endday date-or-days] [-s] [-v] [-q]
                          FILE
 
@@ -23,7 +19,7 @@ Python 3:   https://github.com/novoid/memacs/
 You can configure the behavior and output via a configuration file.
 
 Example usages:
-  ./exchange2org.py --calendar some/subfolder/my_exchange_calendar.org
+  exchange2org.py --calendar some/subfolder/my_exchange_calendar.org
       … writes your calendar events into the Org-mode file.
 
 positional arguments:
@@ -53,7 +49,6 @@ optional arguments:
 ·
 #+END_src
 
-
 - Hosted on github: https://github.com/novoid/exchange2org
 - Will be discontinued and merged into
   https://github.com/novoid/memacs/ as soon as Memacs got migrated to
@@ -61,11 +56,7 @@ optional arguments:
 
 ** Installation
 
-Clone it via [[https://github.com/novoid/filetags][GitHub]] and install all dependencies via =pip=:
-
-: sudo pip install logging exchangelib
-
-Run it with Python 3.x.
+Clone it via [[https://github.com/novoid/filetags][GitHub]] or install =pip exchange2org=
 
 * How to Thank Me
 

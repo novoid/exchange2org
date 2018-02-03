@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-PROG_VERSION = "Time-stamp: <2017-09-26 18:01:15 vk>"
+PROG_VERSION = "Time-stamp: <2018-02-03 19:41:17 vk>"
 
 # TODO:
 # - fix parts marked with «FIXXME»
@@ -46,7 +46,7 @@ Python 3:   https://github.com/novoid/memacs/\n\
 You can configure the behavior and output via a configuration file.\n\
 \n\
 Example usages:\n\
-  " + sys.argv[0] + " --calendar some/subfolder/my_exchange_calendar.org\n\
+  exchange2org --calendar some/subfolder/my_exchange_calendar.org\n\
       … writes your calendar events into the Org-mode file.\n\
 \n\
 \n"
