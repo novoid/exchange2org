@@ -314,6 +314,9 @@ class Exchange2Org(object):
                     if not options.dryrun:
                         outputhandle.write(output)
 
+            if not options.dryrun:
+                outputhandle.write('\n\n# Local Variables:\n# mode: auto-revert-mode\n# End:\n')
+
         self.logger.info(str(number_of_events) + ' events were written to ' + outputfilename)
 
 
