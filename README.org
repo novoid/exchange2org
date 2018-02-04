@@ -72,6 +72,13 @@ optional arguments:
 
 Clone it via [[https://github.com/novoid/filetags][GitHub]] or install =pip exchange2org=
 
+You're going to need a configuration file. On GNU/Linux, this is:
+=$HOME/.config/exchange2org/exchange2orgconfig.py=
+
+This repository (as well as the pip package) comes with [[file:exchange2org/exchange2orgconfig-TEMPLATE.py][a template
+file]] named =exchange2orgconfig-TEMPLATE.py= you can modify to meet
+your requirements.
+
 * How to Thank Me
 
 I'm glad you like my tools. If you want to support me:
