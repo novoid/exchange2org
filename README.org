@@ -88,20 +88,22 @@ I personally run following command via cron Monday to Friday during office hours
 
 On Sunday, I archive my calendar with the following script:
 
-: #!/bin/sh
-:
-: TMPFILE=`mktemp`
-: ARCHIVEFILE='$HOME/org/memacs/company-calendar-archive.org_archive'
-:
-: # It gets the previous 7 days of events, greps out the header (take
-: # only lines starting with two asterisks) and appends them to the
-: # archive file:
-:
-: $HOME/src/exchange2org/exchange2org/__init__.py --calendar --quiet \
-:          --startday 7 --endday 0 --ignore-category 'Org-mode' "${TMPFILE}" && \
-:     egrep '\*\* <' "${TMPFILE}" >> "${ARCHIVEFILE}" && \
-:     rm "${TMPFILE}"
-: #end
+#+BEGIN_SRC sh
+#!/bin/sh
+
+TMPFILE=`mktemp`
+ARCHIVEFILE='$HOME/org/memacs/company-calendar-archive.org_archive'
+
+# It gets the previous 7 days of events, greps out the header (take
+# only lines starting with two asterisks) and appends them to the
+# archive file:
+
+$HOME/src/exchange2org/exchange2org/__init__.py --calendar --quiet \
+         --startday 7 --endday 0 --ignore-category 'Org-mode' "${TMPFILE}" && \
+    egrep '\*\* <' "${TMPFILE}" >> "${ARCHIVEFILE}" && \
+    rm "${TMPFILE}"
+#end
+#+END_SRC
 
 * How to Thank Me
 
