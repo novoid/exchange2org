@@ -59,6 +59,8 @@ optional arguments:
 ·
 #+END_src
 
+Read [[https://github.com/novoid/dot-emacs/blob/master/config.org#links-to-outlook-entities][my configuration on how to open outlook links]].
+
 - Hosted on github: https://github.com/novoid/exchange2org
 - Will be discontinued and merged into
   https://github.com/novoid/memacs/ as soon as Memacs got migrated to
