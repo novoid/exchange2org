@@ -1,15 +1,5 @@
 * exchange2org
 
-This is how it looks on my agenda:
-
-[[file:screenshot_emacs.png]]
-
-Those are the corresponding source appointments from my Outlook 2016 (dark theme):
-
-[[file:screenshot_outlook.png]]
-
-Here is how I get the appointments from Outlook to [[http://karl-voit.at/orgmode/][Org-mode]]:
-
 #+BEGIN_SRC sh :results output :wrap src
 ./exchange2org/__init__.py --help
 #+END_SRC
