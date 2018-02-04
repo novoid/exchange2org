@@ -79,6 +79,30 @@ This repository (as well as the pip package) comes with [[file:exchange2org/exch
 file]] named =exchange2orgconfig-TEMPLATE.py= you can modify to meet
 your requirements.
 
+** Automatization
+
+I personally run following command via cron Monday to Friday during office hours:
+
+: $HOME/src/exchange2org/exchange2org/__init__.py --calendar --startday 7 \
+:     --endday 45 $HOME/org/exported-company-calendar.org -q --ignore-category 'Org-mode'
+
+On Sunday, I archive my calendar with the following script:
+
+: #!/bin/sh
+:
+: TMPFILE=`mktemp`
+: ARCHIVEFILE='$HOME/org/memacs/company-calendar-archive.org_archive'
+:
+: # It gets the previous 7 days of events, greps out the header (take
+: # only lines starting with two asterisks) and appends them to the
+: # archive file:
+:
+: $HOME/src/exchange2org/exchange2org/__init__.py --calendar --quiet \
+:          --startday 7 --endday 0 --ignore-category 'Org-mode' "${TMPFILE}" && \
+:     egrep '\*\* <' "${TMPFILE}" >> "${ARCHIVEFILE}" && \
+:     rm "${TMPFILE}"
+: #end
+
 * How to Thank Me
 
 I'm glad you like my tools. If you want to support me:
