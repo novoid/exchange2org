@@ -15,6 +15,9 @@ EXCHANGE_SERVER = 'mail.example.com'
 
 # Domain and username like 'MYDOMAIN\\firstname.lastname'
 USERNAME = 'MYDOMAIN\\firstname.lastname'
+# In some cases (e.g. Office365) you only need your e-mail address. Try and
+# see what works.
+# USERNAME = 'first.last@example.com'
 
 # You are about to enter your exchange password in clear text. Please
 # make sure that only you are allowed to access this configuration

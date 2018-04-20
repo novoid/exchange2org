@@ -18,9 +18,10 @@ Here is how I get the appointments from Outlook to [[http://karl-voit.at/orgmode
 #+END_SRC
 
 #+BEGIN_src
-usage: exchange2org.py [-h] [--calendar] [--startday date-or-days]
-                         [--endday date-or-days] [-s] [-v] [-q]
-                         FILE
+usage: /usr/bin/exchange2org [-h] [--calendar] [--startday date-or-days]
+                             [--endday date-or-days]
+                             [--ignore-category CATEGORY] [-s] [-v] [-q]
+                             FILE
 
 This tool connects to your Exchange server and extracts data
 in Org-mode format.
@@ -32,7 +33,7 @@ Python 3:   https://github.com/novoid/memacs/
 You can configure the behavior and output via a configuration file.
 
 Example usages:
-  exchange2org.py --calendar some/subfolder/my_exchange_calendar.org
+  exchange2org --calendar some/subfolder/my_exchange_calendar.org
       … writes your calendar events into the Org-mode file.
 
 positional arguments:
@@ -49,6 +50,8 @@ optional arguments:
                         End date for fetching data. Default: 60 days in
                         future. "date-or-days" is either of form "YYYY-MM-DD"
                         or a number.
+  --ignore-category CATEGORY
+                        Category whose events will be omitted.
   -s, --dryrun          enable dryrun mode: simulate what would happen, do not
                         modify anything
   -v, --verbose         enable verbose mode
@@ -58,7 +61,7 @@ optional arguments:
 :license: GPL v3 or any later version
 :URL: https://github.com/novoid/exchange2org
 :bugreports: via github or <tools@Karl-Voit.at>
-:version: 2017-09-16
+:version: 2018-02-03
 ·
 #+END_src
 
