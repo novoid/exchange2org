@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-PROG_VERSION = "Time-stamp: <2018-02-03 19:41:17 vk>"
+PROG_VERSION = "Time-stamp: <2018-05-21 00:45:35 vk>"
 
 # TODO:
 # - fix parts marked with «FIXXME»
@@ -337,7 +337,7 @@ class Exchange2Org(object):
                         outputhandle.write(output)
 
             if not options.dryrun:
-                outputhandle.write('\n\n# Local Variables:\n# mode: auto-revert-mode\n# End:\n')
+                outputhandle.write('\n\n# Local Variables:\n# mode: auto-revert\n# End:\n')
 
         self.logger.info(str(number_of_events) + ' events were written to ' + outputfilename)
 
