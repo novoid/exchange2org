@@ -206,7 +206,7 @@ class Exchange2Org(object):
         start_time = event.start.astimezone(self.tz).ewsformat()[11:16]
         end_day = event.end.astimezone(self.tz).ewsformat()[:10]
         end_time = event.end.astimezone(self.tz).ewsformat()[11:16]
-        entry_id = self.convert_itemid_from_exchange_to_entryid_for_outlook(str(event.item_id))
+        entry_id = self.convert_itemid_from_exchange_to_entryid_for_outlook(str(event._id.id))
         #entry_id = event.item_id  # until I found a working version for Python 3 of the function above
 
         if event.is_all_day:
@@ -228,7 +228,7 @@ class Exchange2Org(object):
         debugtext.append('end_day:' + end_day)
         debugtext.append('end_time:' + end_time)
         debugtext.append('subject: ' + event.subject)
-        debugtext.append('item_id: ' + event.item_id)
+        debugtext.append('item_id: ' + event._id.id)
         debugtext.append('entry_id: ' + entry_id)
         debugtext.append('is_all_day: ' + repr(event.is_all_day)) # =False
         if event.location:
