@@ -267,6 +267,14 @@ class Exchange2Org(object):
         if len(self.config.OUTLOOK_HYPERLINK) > 1:
             output += ' [[outlook:' + entry_id + '][⦿]]'
 
+        if self.config.WRITE_SCHEDULED:
+            output += "\nSCHEDULED: "
+            output += self.generate_orgmode_date_range(event)
+
+        if self.config.WRITE_DEADLINE:
+            output += "\nDEADLINE: "
+            output += self.generate_orgmode_date_range(event)
+
         if self.config.WRITE_PROPERTIES_DRAWER:
             output += '\n:PROPERTIES:\n:ID: ' + entry_id + '\n:END:\n'
         else:
@@ -276,6 +284,20 @@ class Exchange2Org(object):
             output += ': ' + '\n: '.join(debugtext) + '\n'
 
         return output
+
+
+    def generate_orgmode_date_range(self, event):
+        """
+        Generates a org mode compatible time range from a calendar event
+        """
+        result =  ""
+        start_day = event.start.astimezone(self.tz)
+        end_day = event.end.astimezone(self.tz)
+        if start_day.date() == end_day.date():
+            result += "<" + start_day.strftime("%Y-%m-%d %a %H:%M-") + end_day.strftime("%H:%M") + ">"
+        else:
+            result += "<" + start_day.strftime("%Y-%m-%d %a %H:%M") + ">--<" + end_day.strftime("%Y-%m-%d %a %H:%M") + ">"
+        return result
 
     def dump_calendar(self, startday, endday):
         """
