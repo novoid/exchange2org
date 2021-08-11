@@ -56,6 +56,11 @@ OMIT_SUBJECTS = ['Christmas Eve', 'Sylvester', 'Good Friday', 'Holy Thursday',
 # entries, set this to False:
 WRITE_PROPERTIES_DRAWER = True
 
+# Set SCHEDULED and/or DEADLINE timestamps to the time range of each event
+# By default write SCHEDULED timestamps
+WRITE_SCHEDULED = True
+WRITE_DEADLINE = False
+
 # ===================================================================== ##
 #                                                                       ##
 #  These are INTERNAL configuration settings.                           ##
