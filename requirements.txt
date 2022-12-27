@@ -24,4 +24,4 @@ six==1.16.0
 tzdata==2021.1
 tzlocal==2.1
 urllib3==1.26.6
-wheel==0.36.2
+wheel==0.38.1
