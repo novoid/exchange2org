@@ -155,7 +155,7 @@ class Exchange2Org(object):
         try:
             self.exchange_config = exchangelib.Configuration(exchangelib.Credentials(self.config.USERNAME, self.config.PASSWORD), server=self.config.EXCHANGE_SERVER)
             self.account = exchangelib.Account(self.config.PRIMARY_SMTP_ADDRESS, config=self.exchange_config, autodiscover=False, access_type=exchangelib.DELEGATE)
-            self.tz = exchangelib.EWSTimeZone.timezone(self.config.TIMEZONE)
+            self.tz = exchangelib.EWSTimeZone(self.config.TIMEZONE)
         except:
             logger.critical('Error occured while trying to set up connection with the exchange server "' + self.config.EXCHANGE_SERVER + '":')
             raise
@@ -184,6 +184,17 @@ class Exchange2Org(object):
         # Somehow, my Outlook does not want the first 86 characters:
         return itemID[86:]
 
+    def ewsdate_to_ewsdatetime_with_tz(self, d):
+        """
+        Convert EWSDate or EWSDateTtime to EWSDateTtime with timezone applied
+
+        @param d EWSDate or EWSDateTtime
+        """
+        if isinstance(d, exchangelib.EWSDate):
+            return exchangelib.EWSDateTime.from_datetime(datetime.datetime.combine(d, datetime.time(0, 0), tzinfo=self.tz))
+        else:
+            return d.astimezone(self.tz)
+
     def convert_to_orgmode(self, event):
         """
         Gets a calendar event and returns its representation in Org-mode format.
@@ -202,10 +213,12 @@ class Exchange2Org(object):
             if options.ignore_category[0] in event.categories:
                 return False
 
-        start_day = event.start.astimezone(self.tz).ewsformat()[:10]
-        start_time = event.start.astimezone(self.tz).ewsformat()[11:16]
-        end_day = event.end.astimezone(self.tz).ewsformat()[:10]
-        end_time = event.end.astimezone(self.tz).ewsformat()[11:16]
+        event_start = self.ewsdate_to_ewsdatetime_with_tz(event.start)
+        event_end = self.ewsdate_to_ewsdatetime_with_tz(event.end)
+        start_day = event_start.ewsformat()[:10]
+        start_time = event_start.ewsformat()[11:16]
+        end_day = event_end.ewsformat()[:10]
+        end_time = event_end.ewsformat()[11:16]
         entry_id = self.convert_itemid_from_exchange_to_entryid_for_outlook(str(event.id))
         #entry_id = event.item_id  # until I found a working version for Python 3 of the function above
 
@@ -221,10 +234,10 @@ class Exchange2Org(object):
             end_day = new_end_day
 
         debugtext = []
-        debugtext.append('start:' + event.start.astimezone(self.tz).ewsformat())  # example: '2017-09-13T09:30:00+02:00'
+        debugtext.append('start:' + event_start.ewsformat())  # example: '2017-09-13T09:30:00+02:00'
         debugtext.append('start_day:' + start_day)
         debugtext.append('start_time:' + start_time)
-        debugtext.append('end: ' + event.end.astimezone(self.tz).ewsformat())
+        debugtext.append('end: ' + event_end.ewsformat())
         debugtext.append('end_day:' + end_day)
         debugtext.append('end_time:' + end_time)
         debugtext.append('subject: ' + event.subject)
@@ -291,8 +304,8 @@ class Exchange2Org(object):
         Generates a org mode compatible time range from a calendar event
         """
         result =  ""
-        start_day = event.start.astimezone(self.tz)
-        end_day = event.end.astimezone(self.tz)
+        start_day = self.ewsdate_to_ewsdatetime_with_tz(event.start).astimezone(self.tz)
+        end_day = self.ewsdate_to_ewsdatetime_with_tz(event.end).astimezone(self.tz)
         if start_day.date() == end_day.date():
             result += "<" + start_day.strftime("%Y-%m-%d %a %H:%M-") + end_day.strftime("%H:%M") + ">"
         else:
@@ -311,7 +324,9 @@ class Exchange2Org(object):
         outputfilename = options.outputfile[0]
 
         # Fetch all calendar events from the Exchange server:
-        events = self.account.calendar.view(start=self.tz.localize(exchangelib.EWSDateTime(*startday)), end=self.tz.localize(exchangelib.EWSDateTime(*endday)))
+        start_dt = exchangelib.EWSDateTime(*startday).replace(tzinfo=self.tz)
+        end_dt = exchangelib.EWSDateTime(*endday).replace(tzinfo=self.tz)
+        events = self.account.calendar.view(start=start_dt, end=end_dt)
 
         with open(outputfilename, 'w') as outputhandle:
 
