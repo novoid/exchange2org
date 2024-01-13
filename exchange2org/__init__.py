@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-PROG_VERSION = "Time-stamp: <2018-05-21 00:45:35 vk>"
+PROG_VERSION = "Time-stamp: <2024-01-13 18:28:28 vk>"
 
 # TODO:
 # - fix parts marked with «FIXXME»
@@ -13,7 +13,7 @@ PROG_VERSION = "Time-stamp: <2018-05-21 00:45:35 vk>"
 
 import importlib
 
-def save_import(library):
+def safe_import(library):
     try:
         globals()[library] = importlib.import_module(library)
     except ImportError:
@@ -24,12 +24,12 @@ def save_import(library):
 import sys
 import os
 import re
-save_import('base64')       # itemID/entryID conversion
-save_import('argparse')     # for handling command line arguments
-save_import('time')
-save_import('datetime')
-save_import('logging')
-save_import('exchangelib')  # for accessing Exchange servers
+safe_import('base64')       # itemID/entryID conversion
+safe_import('argparse')     # for handling command line arguments
+safe_import('time')
+safe_import('datetime')
+safe_import('logging')
+safe_import('exchangelib')  # for accessing Exchange servers
 
 
 PROG_VERSION_DATE = PROG_VERSION[13:23]
